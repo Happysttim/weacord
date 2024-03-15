@@ -3,17 +3,15 @@ package com.happysttim.weacord.core.apis
 import com.google.gson.Gson
 import com.happysttim.weacord.core.apis.listener.IApisListener
 import com.happysttim.weacord.core.apis.request.IApisRequest
-import io.github.oshai.kotlinlogging.KotlinLogging
+import com.happysttim.weacord.utils.Logger
 import kotlinx.coroutines.Runnable
 import okhttp3.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
-private val logging = KotlinLogging.logger {  }
-
 class ApisHttp(private val interval: Long, private val timeUnit: TimeUnit) {
-
+    private val logging = Logger.getLogger<ApisHttp>()
     private val basePath: String = "http://apis.data.go.kr/1360000/WthrWrnInfoService/"
     private val httpClient = okhttp3.OkHttpClient.Builder().connectionPool(
         ConnectionPool(8, 5L, TimeUnit.MINUTES)
@@ -37,7 +35,7 @@ class ApisHttp(private val interval: Long, private val timeUnit: TimeUnit) {
                     }
                 }
             } catch(e: Exception) {
-                logging.error { "HTTP(${it.key.path()}) 요청 중 에러가 발생했습니다. ${e.message}" }
+                logging.error("HTTP(${it.key.path()}) 요청 중 에러가 발생했습니다. ${e.message}")
             }
         }
     }

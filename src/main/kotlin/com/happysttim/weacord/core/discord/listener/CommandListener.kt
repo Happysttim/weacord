@@ -2,16 +2,15 @@ package com.happysttim.weacord.core.discord.listener
 
 import com.happysttim.weacord.core.database.Schema
 import com.happysttim.weacord.core.database.table.Guild
-import io.github.oshai.kotlinlogging.KotlinLogging
+import com.happysttim.weacord.utils.Logger
 import net.dv8tion.jda.api.entities.channel.ChannelType
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import org.sqlite.SQLiteException
 
-private val logging = KotlinLogging.logger {  }
-
 class CommandListener: ListenerAdapter() {
 
+    private val logging = Logger.getLogger<CommandListener>()
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
         val guild = event.guild
 
@@ -36,7 +35,7 @@ class CommandListener: ListenerAdapter() {
                     event.reply("날씨 알림을 ${ if(it) "ON" else "OFF" } 했습니다!").queue()
                 }
             } catch(e: SQLiteException) {
-                logging.error { e.message }
+                logging.error(e.message)
             }
         }
     }

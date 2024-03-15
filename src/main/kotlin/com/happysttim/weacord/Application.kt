@@ -14,22 +14,23 @@ import com.happysttim.weacord.core.database.table.Guild
 import com.happysttim.weacord.core.database.table.NationalBreakNews
 import com.happysttim.weacord.core.database.table.WeatherNews
 import com.happysttim.weacord.core.discord.JDALauncher
+import com.happysttim.weacord.utils.Logger
 import com.happysttim.weacord.utils.SharedDate
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.sqlite.SQLiteException
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.timer
 
-private val logging = KotlinLogging.logger {  }
-
 class Application {
+
+    private val logging = Logger.getLogger<Application>()
+
     fun start() {
         val dbService = DatabaseService.getInstance()
         val launcher = JDALauncher.getInstance()
         val http = ApisHttp(1L, TimeUnit.MINUTES)
 
-        logging.info { "서비스 준비중입니다..." }
+        logging.info("서비스 준비중입니다...")
         dbService.start()
 
         Schema.register(
@@ -47,7 +48,7 @@ class Application {
         launcher.start()
         http.start()
 
-        logging.info { "디스코드 봇이 시작되었습니다!" }
+        logging.info("디스코드 봇이 시작되었습니다!")
 
         timer(
             initialDelay = 600 * 1000L,
@@ -79,7 +80,7 @@ class Application {
                     }.build()
                 )
             } catch(e: SQLiteException) {
-                logging.error { e.message }
+                logging.error(e.message)
             }
         }
     }

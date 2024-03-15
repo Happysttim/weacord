@@ -2,7 +2,7 @@ package com.happysttim.weacord.core.discord.listener
 
 import com.happysttim.weacord.core.database.Schema
 import com.happysttim.weacord.core.database.table.Guild
-import io.github.oshai.kotlinlogging.KotlinLogging
+import com.happysttim.weacord.utils.Logger
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent
@@ -14,9 +14,9 @@ import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.Commands
 import org.sqlite.SQLiteException
 
-private val logging = KotlinLogging.logger {  }
-
 class EventListener : ListenerAdapter() {
+
+    private val logging = Logger.getLogger<EventListener>()
 
     override fun onGuildReady(event: GuildReadyEvent) {
         val guild = event.guild
@@ -40,14 +40,13 @@ class EventListener : ListenerAdapter() {
                         isAlarm = 1
                     )
                 )
-                logging.info { "${guild.name}(${guild.idLong}) 서버가 감지되었습니다." }
             } else {
                 data.isLive = 1
                 Schema.update(data) == null
-                logging.info { "${guild.name}(${guild.idLong}) 서버가 감지되었습니다." }
             }
+            logging.info("${guild.name}(${guild.idLong}) 서버가 감지되었습니다.")
         } catch(e: SQLiteException) {
-            logging.error { e.message }
+            logging.error(e.message)
         }
     }
 
@@ -60,9 +59,9 @@ class EventListener : ListenerAdapter() {
                 Schema.delete(it)
             }
 
-            logging.info { "감지되지 않은 ${ targets.size }개의 서버를 삭제했습니다." }
+            logging.info("감지되지 않은 ${ targets.size }개의 서버를 삭제했습니다.")
         } catch(e: SQLiteException) {
-            logging.error { e.message }
+            logging.error(e.message)
         }
     }
 
@@ -86,9 +85,9 @@ class EventListener : ListenerAdapter() {
                 )
             )
 
-            logging.info { "${guild.name}(${guild.idLong}) 서버가 감지되었습니다." }
+            logging.info("${guild.name}(${guild.idLong}) 서버가 감지되었습니다.")
         } catch(e: SQLiteException) {
-            logging.error { e.message }
+            logging.error(e.message)
         }
 
     }
@@ -99,10 +98,10 @@ class EventListener : ListenerAdapter() {
         try {
             Schema.find<Guild>("Guild", guild.id)?.run {
                 Schema.delete(this)
-                logging.info { "${guild.name}(${guild.idLong}) 서버에서 추방당했습니다." }
+                logging.info("${guild.name}(${guild.idLong}) 서버에서 추방당했습니다.")
             }
         } catch(e: SQLiteException) {
-            logging.error { e.message }
+            logging.error(e.message)
         }
     }
 }

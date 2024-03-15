@@ -1,17 +1,18 @@
 package com.happysttim.weacord.core.apis.listener
 
+import com.happysttim.weacord.Application
 import com.happysttim.weacord.utils.SharedDate
 import com.happysttim.weacord.core.data.Cd
 import com.happysttim.weacord.core.database.Schema
 import com.happysttim.weacord.core.database.querybuilder.QueryBuilder
 import com.happysttim.weacord.core.database.table.BreakNewsCode
 import com.happysttim.weacord.core.discord.JDALauncher
+import com.happysttim.weacord.utils.Logger
 import com.happysttim.weacord.utils.Weather
-import io.github.oshai.kotlinlogging.KotlinLogging
-
-private val logging = KotlinLogging.logger {  }
 
 class PwnCdListener: IApisListener<Cd> {
+
+    private val logging = Logger.getLogger<PwnCdListener>()
     override fun onTask(cd: Cd?) {
         val today = SharedDate.getDateOnTime()
         val search = Schema.Search<BreakNewsCode>("BreakNewsCode")
@@ -44,7 +45,7 @@ class PwnCdListener: IApisListener<Cd> {
             }
 
             if(newData > 0) {
-                val updated = search.limit(newData).orderBy("tmFc", QueryBuilder.OrderBy.DESC).call()
+                val updated = search.limit(newData).orderBy("tmFc", QueryBuilder.OrderBy.ASC).call()
 
                 updated.forEach {
                     val tmFc = it.tmFc.toString()
@@ -63,6 +64,6 @@ class PwnCdListener: IApisListener<Cd> {
             }
         }
 
-        logging.info { "총 $newData 개의 신규 데이터를 저장했습니다." }
+        logging.info("총 $newData 개의 신규 데이터를 저장했습니다.")
     }
 }

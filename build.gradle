@@ -9,6 +9,12 @@ repositories {
     mavenCentral()
 }
 
+jar {
+    manifest {
+        attributes "Main-Class": "com.happysttim.weacord.ApplicationKt"
+    }
+}
+
 dependencies {
     implementation("net.dv8tion:JDA:5.0.0-beta.20")
     implementation("com.squareup.okhttp:okhttp:2.7.5")
@@ -19,7 +25,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("org.xerial:sqlite-jdbc:3.45.1.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect:2.0.0-Beta4")
-    implementation("io.github.oshai:kotlin-logging:6.0.3")
 }
 
 compileKotlin {
