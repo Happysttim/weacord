@@ -2,7 +2,7 @@ package com.happysttim.weacord.core.database.querybuilder
 
 class QueryBuilder {
 
-    lateinit var crudType: Crud
+    var crudType: Crud
     lateinit var column: MutableList<String>
     lateinit var from: MutableList<String>
     lateinit var group: MutableList<String>

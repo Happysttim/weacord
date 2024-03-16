@@ -33,13 +33,13 @@ data class Cd (
             ) {
                 data class Item (
                     @SerializedName("stnId")
-                    open val stnId: Int = 0,
+                    val stnId: Int = 0,
 
                     @SerializedName("tmFc")
-                    open val tmFc: Long = 0,
+                    val tmFc: Long = 0,
 
                     @SerializedName("tmSeq")
-                    open val tmSeq: Int = 0,
+                    val tmSeq: Int = 0,
 
                     @SerializedName("allEndTime")
                     val allEndTime: Long = 0,

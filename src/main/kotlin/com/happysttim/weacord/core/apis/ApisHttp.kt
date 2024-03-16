@@ -28,11 +28,9 @@ class ApisHttp(private val interval: Long, private val timeUnit: TimeUnit) {
             try {
                 val response = httpClient.newCall(builder).execute()
 
-                if(response != null) {
-                    val responseMessage = gson.fromJson(response.body?.string(), it.key.responseType().java)
-                    if(it.value != null) {
-                        it.value?.onTask(responseMessage)
-                    }
+                val responseMessage = gson.fromJson(response.body?.string(), it.key.responseType().java)
+                if(it.value != null) {
+                    it.value?.onTask(responseMessage)
                 }
             } catch(e: Exception) {
                 logging.error("HTTP(${it.key.path()}) 요청 중 에러가 발생했습니다. ${e.message}")
@@ -47,12 +45,9 @@ class ApisHttp(private val interval: Long, private val timeUnit: TimeUnit) {
 
         val response = httpClient.newCall(builder).execute()
 
-        if(response != null) {
-            val responseMessage = gson.fromJson(response.body?.string(), iApis.responseType().java) as T
-            if(iListener != null) {
-                iListener(responseMessage)
-            }
-        }
+        @Suppress("UNCHECKED_CAST")
+        val responseMessage = gson.fromJson(response.body?.string(), iApis.responseType().java) as T
+        iListener(responseMessage)
     }
 
     fun registerListener(iApis: IApisRequest, iListener: IApisListener<Any>?) {

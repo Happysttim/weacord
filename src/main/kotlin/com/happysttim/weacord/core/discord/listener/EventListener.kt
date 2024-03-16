@@ -42,7 +42,7 @@ class EventListener : ListenerAdapter() {
                 )
             } else {
                 data.isLive = 1
-                Schema.update(data) == null
+                Schema.update(data)
             }
             logging.info("${guild.name}(${guild.idLong}) 서버가 감지되었습니다.")
         } catch(e: SQLiteException) {

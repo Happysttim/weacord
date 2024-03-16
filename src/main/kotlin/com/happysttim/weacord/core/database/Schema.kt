@@ -86,6 +86,7 @@ object Schema {
 
                     while(result != null && result.next()) {
                         val propertyMatch = columnFields.keys.toList().associate { columnFields[it]?.property?.name to result.getObject(it) }
+                        @Suppress("UNCHECKED_CAST")
                         domain.add(
                             cons?.parameters?.associate {
                                 it to propertyMatch[it.name]
@@ -96,7 +97,7 @@ object Schema {
                     }
                 }
 
-                return domain
+                domain
             }
         }
 
@@ -289,6 +290,7 @@ object Schema {
                     } else if(result.next()) {
                         val cons = tableClass.primaryConstructor
                         val propertyMatch = columnFields.keys.toList().associate { columnFields[it]?.property?.name to result.getObject(it) }
+                        @Suppress("UNCHECKED_CAST")
                         cons?.parameters?.associate {
                             it to propertyMatch[it.name]
                         }?.let {
