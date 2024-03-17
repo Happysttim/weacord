@@ -16,7 +16,7 @@ class BreakNewsListener: IApisListener<News> {
         val search = Schema.Search<WeatherNews>("WeatherNews")
         val latest = search.where {
             first("tmFc >= $today")
-        }.orderBy("tmFc", QueryBuilder.OrderBy.DESC).call()
+        }.orderBy("tmFc", QueryBuilder.OrderBy.DESC).call().first()
 
         var newData = 0
 
@@ -28,7 +28,7 @@ class BreakNewsListener: IApisListener<News> {
                     ann = item.ann
                 )
 
-                if(latest.find { it == weatherNews } == null) {
+                if(latest != weatherNews) {
                     Schema.insert(weatherNews)
                     newData++
                 } else break

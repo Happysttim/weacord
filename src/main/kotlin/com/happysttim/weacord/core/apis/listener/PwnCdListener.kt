@@ -18,7 +18,7 @@ class PwnCdListener: IApisListener<Cd> {
         val search = Schema.Search<BreakNewsCode>("BreakNewsCode")
         val latest = search.orderBy("tmFc", QueryBuilder.OrderBy.DESC).where {
             first("tmFc >= $today")
-        }.call()
+        }.call().first()
         var newData = 0
 
         cd?.message?.body?.run {
@@ -38,7 +38,7 @@ class PwnCdListener: IApisListener<Cd> {
                     startTime = item.startTime
                 )
 
-                if(latest.find { bnc -> bnc == breakNewsCode } == null) {
+                if(latest != breakNewsCode) {
                     Schema.insert(breakNewsCode)
                     newData++
                 } else break
@@ -54,9 +54,9 @@ class PwnCdListener: IApisListener<Cd> {
 
                     JDALauncher.getInstance().sendBroadcastMessage("```${ tmFc.substring(0, 4) }년 ${ tmFc.substring(4, 6) }월 ${ tmFc.substring(6, 8) }일 ${ tmFc.substring(8, 10) }:${ tmFc.substring(10, 12) } ${ it.areaName } ${ Weather.typeToName(it.warnVar) }${ Weather.stressToName(it.warnStress) } ${ Weather.commandToName(it.command) }\n" +
                             "${
-                                if(startTime != "") {
+                                if(startTime != "0") {
                                     "발표시각: ${ startTime.substring(0, 4) }년 ${ startTime.substring(4, 6) }월 ${ startTime.substring(6, 8) }일 ${ startTime.substring(8, 10) }:${ startTime.substring(10, 12) }"
-                                } else if(endTime != "") {
+                                } else if(endTime != "0") {
                                     "해제시각: ${ endTime.substring(0, 4) }년 ${ endTime.substring(5, 6) }월 ${ endTime.substring(6, 8) }일 ${ endTime.substring(8, 10) }:${ endTime.substring(10, 12) }"
                                 } else ""
                             }```")

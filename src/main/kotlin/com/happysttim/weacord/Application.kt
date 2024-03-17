@@ -51,7 +51,7 @@ class Application {
         logging.info("디스코드 봇이 시작되었습니다!")
 
         timer(
-            initialDelay = 600 * 1000L,
+            initialDelay = 0,
             period = 600 * 1000L
         ) {
             val queryExecutor = QueryExecutor()
