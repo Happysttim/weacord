@@ -23,7 +23,7 @@ class EventListener : ListenerAdapter() {
         val data = Schema.find<Guild>("Guild", guild.id)
 
         guild.updateCommands().addCommands(
-            Commands.slash("날씨특보", "특보알리미 봇에 대한 설정을 다루는 명령어 입니다")
+            Commands.slash("날씨경보", "특보알리미 봇에 대한 설정을 다루는 명령어 입니다")
                 .addOption(OptionType.CHANNEL, "채널", "알림이 어떤 채널에 올 수 있는지 설정합니다.")
                 .addOption(OptionType.BOOLEAN, "알림", "특보 알림을 끄거나 킬 수 있습니다.")
                 .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_PERMISSIONS)),

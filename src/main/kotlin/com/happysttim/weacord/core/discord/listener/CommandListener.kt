@@ -14,7 +14,7 @@ class CommandListener: ListenerAdapter() {
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
         val guild = event.guild
 
-        if(event.name == "날씨특보") {
+        if(event.name == "날씨경보") {
             try {
                 event.getOption("채널")?.asChannel?.let {
                     if(it.type == ChannelType.TEXT) {

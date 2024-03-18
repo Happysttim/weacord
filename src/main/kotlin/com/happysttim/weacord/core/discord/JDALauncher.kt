@@ -7,7 +7,11 @@ import com.happysttim.weacord.core.discord.listener.CommandListener
 import io.github.cdimascio.dotenv.Dotenv
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
+import net.dv8tion.jda.api.OnlineStatus
+import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.requests.GatewayIntent
+import net.dv8tion.jda.api.utils.data.DataObject
+import net.dv8tion.jda.internal.entities.EntityBuilder
 
 class JDALauncher private constructor() {
 
@@ -29,8 +33,13 @@ class JDALauncher private constructor() {
         jda = JDABuilder.createDefault(
             Dotenv.load().get("DISCORD_TOKEN"),
             GatewayIntent.GUILD_MESSAGES, GatewayIntent.DIRECT_MESSAGES, GatewayIntent.MESSAGE_CONTENT
-        ).addEventListeners(CommandListener(), EventListener()).build()
-
+        )
+            .addEventListeners(CommandListener(), EventListener())
+            .setAutoReconnect(true)
+            .setActivity(
+                Activity.watching("/날씨경보")
+            )
+            .build()
         jda.awaitReady()
     }
 
