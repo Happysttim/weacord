@@ -51,4 +51,16 @@ class JDALauncher private constructor() {
             }
         }
     }
+
+    fun sendMessage(guild: Guild, message: String) {
+        if(guild.isAlarm == 1) {
+            jda.guilds.find {
+                it.idLong == guild.gid
+            }?.let {
+                it.textChannels.find { channel ->
+                    channel.idLong == guild.channelID
+                }?.sendMessage(message)?.queue()
+            }
+        }
+    }
 }

@@ -1,14 +1,14 @@
 package com.happysttim.weacord.core.apis.request
 
-import com.happysttim.weacord.utils.SharedDate
+import com.happysttim.weacord.utils.TmFc
 import io.github.cdimascio.dotenv.Dotenv
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
 
 abstract class IApisRequest {
     val serviceKey: String = Dotenv.load().get("OPEN_API_TOKEN")
-    var fromTmFc: String = SharedDate.getDate().toString()
-    var toTmFc: String = SharedDate.getDate().toString()
+    var fromTmFc: String = TmFc.getDate().toString()
+    var toTmFc: String = TmFc.getDate().toString()
     abstract fun path(): String
     abstract fun responseType(): KClass<*>
 

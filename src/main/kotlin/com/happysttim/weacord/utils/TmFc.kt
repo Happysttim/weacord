@@ -3,7 +3,7 @@ package com.happysttim.weacord.utils
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-object SharedDate {
+object TmFc {
 
     private var date = LocalDateTime.now()
 

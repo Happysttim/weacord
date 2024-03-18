@@ -223,8 +223,8 @@ object Schema {
                 } "
 
                 columnField.value.constraints.forEach { (constraint, value) ->
-                    if(constraint != ConstraintType.FOREIGN_KEY && constraint != ConstraintType.PRIMARY_KEY) {
-                        columnStr += " ${ constraint.name }"
+                    if(constraint != ConstraintType.FOREIGN_KEY) {
+                        columnStr += " ${ constraint.name.replace("_", " ") }"
                         if(constraint == ConstraintType.CHECK) {
                             columnStr += " (${ value.toString() })"
                         }
@@ -249,19 +249,18 @@ object Schema {
 
                 columnStr += ", "
             }
-            val sqlQuery = """
+
+            dbService.execute("""
                 CREATE TABLE IF NOT EXISTS $tableName (
                     ${
-                        if(constraintStr.trimIndent() == "") {
-                            columnStr.substring(0, columnStr.length - 2)
-                        } else {
-                            columnStr + constraintStr.substring(0, constraintStr.length - 2)
-                        }
-                    }
+                if(constraintStr.trimIndent() == "") {
+                    columnStr.substring(0, columnStr.length - 2)
+                } else {
+                    columnStr + constraintStr.substring(0, constraintStr.length - 2)
+                }
+            }
                 )
-            """.trimIndent()
-
-            dbService.execute(sqlQuery)
+            """.trimIndent())
         }
     }
 
@@ -313,15 +312,18 @@ object Schema {
             var sqlQuery = "INSERT INTO $tableName ("
 
             schemas[tableName]?.run {
-                sqlQuery += columnFields.keys.joinToString() + ") VALUES ("
+                sqlQuery += columnFields.keys.filterNot {
+                    columnFields[it]?.column?.autoIncrement == true
+                }.joinToString() + ") VALUES ("
                 columnFields.forEach {columnField ->
-                    val value = columnField.value.property.getter.call(data)
-                    sqlQuery += if (value is String) "\"$value\", "
-                    else "$value, "
+                    if(!columnField.value.column.autoIncrement) {
+                        val value = columnField.value.property.getter.call(data)
+                        sqlQuery += if (value is String) "\"$value\", "
+                        else "$value, "
+                    }
                 }
 
-                sqlQuery = "${sqlQuery.substring(0, sqlQuery.length - 2)})"
-                dbService.execute(sqlQuery)
+                dbService.execute("${sqlQuery.substring(0, sqlQuery.length - 2)})")
             }
 
             null
@@ -350,12 +352,11 @@ object Schema {
                     }
                 }
 
-                val sqlQuery = "UPDATE $tableName SET ${ updateList.entries.joinToString() } ${
+                dbService.execute("UPDATE $tableName SET ${ updateList.entries.joinToString() } ${
                     if(whereList.isNotEmpty()) {
-                        " WHERE ${whereList.entries.joinToString(separator = " AND ")}"   
+                        " WHERE ${whereList.entries.joinToString(separator = " AND ")}"
                     } else ""
-                }"
-                dbService.execute(sqlQuery)
+                }")
             }
 
             null
@@ -379,13 +380,11 @@ object Schema {
 
                 }
 
-                val sqlQuery = "DELETE FROM $tableName ${
+                dbService.execute("DELETE FROM $tableName ${
                     if(whereList.isNotEmpty()) {
                         " WHERE ${whereList.entries.joinToString(separator = " AND ")}"
                     } else ""
-                }"
-
-                dbService.execute(sqlQuery)
+                }")
             }
 
             null

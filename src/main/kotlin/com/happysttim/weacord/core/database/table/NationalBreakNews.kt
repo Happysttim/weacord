@@ -18,5 +18,13 @@ data class NationalBreakNews (
 
     @Column(columnName = "title", columnType = ColumnType.STRING)
     @NotNull
-    var title: String = "",
-)
+    var title: String = ""
+) {
+    @Column(columnName = "id", columnType = ColumnType.INTEGER, autoIncrement = true)
+    @PrimaryKey
+    var id: Int = 0
+
+    @Column(columnName = "received", columnType = ColumnType.INTEGER)
+    @NotNull
+    var received: Int = 0
+}

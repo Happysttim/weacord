@@ -15,7 +15,7 @@ import com.happysttim.weacord.core.database.table.NationalBreakNews
 import com.happysttim.weacord.core.database.table.WeatherNews
 import com.happysttim.weacord.core.discord.JDALauncher
 import com.happysttim.weacord.utils.Logger
-import com.happysttim.weacord.utils.SharedDate
+import com.happysttim.weacord.utils.TmFc
 import org.sqlite.SQLiteException
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
@@ -30,7 +30,7 @@ class Application {
         val launcher = JDALauncher.getInstance()
         val http = ApisHttp(1L, TimeUnit.MINUTES)
 
-        logging.info("서비스 준비중입니다...")
+        logging.info("warcord 봇 서비스 준비중입니다...")
         dbService.start()
 
         Schema.register(
@@ -48,7 +48,7 @@ class Application {
         launcher.start()
         http.start()
 
-        logging.info("디스코드 봇이 시작되었습니다!")
+        logging.info("weacord 봇이 시작되었습니다!")
 
         timer(
             initialDelay = 0,
@@ -57,11 +57,11 @@ class Application {
             val queryExecutor = QueryExecutor()
             val now = LocalDateTime.now()
 
-            if(!SharedDate.compare(now)) {
-                SharedDate.update()
+            if(!TmFc.compare(now)) {
+                TmFc.update()
             }
 
-            val today = SharedDate.getDateOnTime()
+            val today = TmFc.getDateOnTime()
 
             try {
                 queryExecutor.execute(
