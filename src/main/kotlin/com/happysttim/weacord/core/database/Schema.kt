@@ -210,6 +210,7 @@ object Schema {
         schemas.forEach { (tableName, schema) ->
             var columnStr = ""
             var constraintStr = ""
+            var primaryKeys = ""
             for(columnField in schema.columnFields) {
                 columnStr += "${ columnField.key } ${
                     when(columnField.value.column.columnType) {
@@ -223,42 +224,46 @@ object Schema {
                 } "
 
                 columnField.value.constraints.forEach { (constraint, value) ->
-                    if(constraint != ConstraintType.FOREIGN_KEY) {
-                        columnStr += " ${ constraint.name.replace("_", " ") }"
+                    if(constraint != ConstraintType.FOREIGN_KEY && constraint != ConstraintType.PRIMARY_KEY) {
+                        columnStr += " ${ constraint.name }"
                         if(constraint == ConstraintType.CHECK) {
                             columnStr += " (${ value.toString() })"
                         }
                         if(columnField.value.column.autoIncrement) {
-                            columnStr += " AUTOINCREMENT"
+                            columnStr += "PRIMARY KEY AUTOINCREMENT"
                         }
                     } else {
-                        constraintStr += """
-                            ${ 
-                                when(constraint) {
-                                    ConstraintType.PRIMARY_KEY -> "PRIMARY KEY(${columnField.value.column.columnName}), "
-                                    ConstraintType.FOREIGN_KEY -> { 
-                                        val fk = value as ForeignKey
-                                        "FOREIGN KEY(${columnField.value.column.columnName}) REFERENCES ${fk.tableName}(${fk.columnName}), "
-                                    }
-                                    else -> ""
-                                }
+                        when(constraint) {
+                            ConstraintType.PRIMARY_KEY -> primaryKeys += "${columnField.value.column.columnName}, "
+                            ConstraintType.FOREIGN_KEY -> {
+                                val fk = value as ForeignKey
+                                constraintStr += "FOREIGN KEY(${columnField.value.column.columnName}) REFERENCES ${fk.tableName}(${fk.columnName}), "
                             }
-                        """.trimIndent()
+                            else -> ""
+                        }
                     }
                 }
-
                 columnStr += ", "
             }
+
+            constraintStr = if(primaryKeys != "") {
+                "PRIMARY KEY(${primaryKeys.substring(0, primaryKeys.length - 2)}) ${
+                    if(constraintStr != "") {
+                        ", $constraintStr"
+                    }
+                    else ", "
+                }"
+            } else constraintStr
 
             dbService.execute("""
                 CREATE TABLE IF NOT EXISTS $tableName (
                     ${
-                if(constraintStr.trimIndent() == "") {
-                    columnStr.substring(0, columnStr.length - 2)
-                } else {
-                    columnStr + constraintStr.substring(0, constraintStr.length - 2)
-                }
-            }
+                        if(constraintStr.trimIndent() == "") {
+                            columnStr.substring(0, columnStr.length - 2)
+                        } else {
+                            columnStr + constraintStr.substring(0, constraintStr.length - 2)
+                        }
+                    }
                 )
             """.trimIndent())
         }

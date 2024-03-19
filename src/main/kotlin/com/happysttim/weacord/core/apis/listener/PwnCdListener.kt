@@ -13,6 +13,7 @@ import com.happysttim.weacord.utils.Weather
 class PwnCdListener: IApisListener<Cd> {
 
     private val logging = Logger.getLogger<PwnCdListener>()
+
     override fun onTask(cd: Cd?) {
         try {
             val today = TmFc.getDateOnTime()
@@ -40,15 +41,14 @@ class PwnCdListener: IApisListener<Cd> {
                     )
 
                     if(latest.find { it == breakNewsCode } == null) {
+                        logging.info("신규 저장 $breakNewsCode")
                         Schema.insert(breakNewsCode)
                         newData++
                     } else break
                 }
 
                 if(newData > 0) {
-                    val updated = Schema.Search<BreakNewsCode>("BreakNewsCode").where {
-                        first("received = 0")
-                    }.limit(newData).orderBy("tmFc", QueryBuilder.OrderBy.ASC).call()
+                    val updated = Schema.Search<BreakNewsCode>("BreakNewsCode").limit(newData).orderBy("tmFc", QueryBuilder.OrderBy.DESC).call().reversed()
                     val guilds = Schema.Search<Guild>("Guild").call()
 
                     updated.forEach { update ->
@@ -65,8 +65,6 @@ class PwnCdListener: IApisListener<Cd> {
                                         } else ""
                                     }```")
                         }
-                        update.received = 1
-                        Schema.update(update)
                     }
                 }
             }

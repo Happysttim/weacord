@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.events.session.ReadyEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions
@@ -17,6 +18,18 @@ import org.sqlite.SQLiteException
 class EventListener : ListenerAdapter() {
 
     private val logging = Logger.getLogger<EventListener>()
+
+    override fun onMessageReceived(event: MessageReceivedEvent) {
+        val content = event.message.contentRaw
+
+        if(content == "!status") {
+            val maxMem = Runtime.getRuntime().maxMemory() / 1024 / 1024
+            val totalMem = Runtime.getRuntime().totalMemory() / 1024 / 1024
+            val freeMem = Runtime.getRuntime().freeMemory() / 1024 / 1024
+
+            event.channel.sendMessage("**메모리 점유율: USED ${ totalMem - freeMem }MB / TOTAL ${totalMem}MB / MAX ${maxMem}MB / ${ ((totalMem - freeMem) * 100 / maxMem).toFloat() }%**").queue()
+        }
+    }
 
     override fun onGuildReady(event: GuildReadyEvent) {
         val guild = event.guild

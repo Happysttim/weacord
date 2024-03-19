@@ -51,12 +51,4 @@ data class BreakNewsCode (
     @Column(columnName = "startTime", columnType = ColumnType.STRING)
     @NotNull
     var startTime: Long = 0,
-) {
-    @Column(columnName = "id", columnType = ColumnType.INTEGER, autoIncrement = true)
-    @PrimaryKey
-    var id: Int = 0
-
-    @Column(columnName = "received", columnType = ColumnType.INTEGER)
-    @NotNull
-    var received: Int = 0
-}
+)

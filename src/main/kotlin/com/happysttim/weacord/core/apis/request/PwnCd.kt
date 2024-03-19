@@ -8,6 +8,6 @@ class PwnCd : IApisRequest() {
     override fun responseType(): KClass<*> = Cd::class
 
     var pageNo: Int = 1
-    var numOfRows: Int = 25
+    var numOfRows: Int = 200
     var dataType: String = "JSON"
 }

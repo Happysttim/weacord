@@ -2,7 +2,9 @@ package com.happysttim.weacord.core.apis.listener
 
 import com.happysttim.weacord.utils.TmFc
 import com.happysttim.weacord.core.data.News
+import com.happysttim.weacord.core.database.QueryExecutor
 import com.happysttim.weacord.core.database.Schema
+import com.happysttim.weacord.core.database.querybuilder.Delete
 import com.happysttim.weacord.core.database.querybuilder.QueryBuilder
 import com.happysttim.weacord.core.database.table.Guild
 import com.happysttim.weacord.core.database.table.WeatherNews
@@ -15,6 +17,12 @@ class BreakNewsListener: IApisListener<News> {
     override fun onTask(news: News?) {
         try {
             val today = TmFc.getDateOnTime()
+            QueryExecutor().execute(
+                Delete().from("BreakNewsCode").where {
+                    first("tmFc < $today")
+                }.build()
+            )
+
             val latest = Schema.Search<WeatherNews>("WeatherNews").where {
                 first("tmFc >= $today")
             }.orderBy("tmFc", QueryBuilder.OrderBy.DESC).call()
@@ -36,9 +44,7 @@ class BreakNewsListener: IApisListener<News> {
                 }
 
                 if(newData > 0) {
-                    val updated = Schema.Search<WeatherNews>("WeatherNews").where {
-                        first("received = 0")
-                    }.limit(newData).orderBy("tmFc", QueryBuilder.OrderBy.ASC).call()
+                    val updated = Schema.Search<WeatherNews>("WeatherNews").limit(newData).orderBy("tmFc", QueryBuilder.OrderBy.ASC).call().reversed()
                     val guilds = Schema.Search<Guild>("Guild").call()
 
                     updated.forEach { update ->
@@ -47,8 +53,6 @@ class BreakNewsListener: IApisListener<News> {
                             JDALauncher.getInstance().sendMessage(guild, """```${ tmFc.substring(0, 4) }년 ${ tmFc.substring(4, 6) }월 ${ tmFc.substring(6, 8) }일 ${ tmFc.substring(8, 10) }:${ tmFc.substring(10, 12) } 뉴스
                             ${ update.ann.replace("\\n", "\n") }```""".trimIndent())
                         }
-                        update.received = 1
-                        Schema.update(update)
                     }
                 }
             }

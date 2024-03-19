@@ -25,7 +25,9 @@ data class Cd (
             @SerializedName("pageNo")
             val page: Int,
             @SerializedName("totalCount")
-            val totalCount: Int
+            val totalCount: Int,
+            @SerializedName("numOfRows")
+            val numOfRows: Int
         ) {
             data class Items (
                 @SerializedName("item")
