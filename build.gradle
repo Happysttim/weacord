@@ -33,11 +33,12 @@ dependencies {
     implementation group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: "1.6.4"
     implementation group: "org.xerial", name: "sqlite-jdbc", version: "3.45.1.0"
     implementation group: "org.jetbrains.kotlin", name: "kotlin-reflect", version: "2.0.0-Beta4"
+    implementation group: "dev.inmo", name: "krontab", version: "2.2.9"
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "17"
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "17"
 }

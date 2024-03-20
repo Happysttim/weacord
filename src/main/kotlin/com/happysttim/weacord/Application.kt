@@ -16,16 +16,18 @@ import com.happysttim.weacord.core.database.table.WeatherNews
 import com.happysttim.weacord.core.discord.JDALauncher
 import com.happysttim.weacord.utils.Logger
 import com.happysttim.weacord.utils.TmFc
+import dev.inmo.krontab.doWhileTz
+import kotlinx.coroutines.runBlocking
 import org.sqlite.SQLiteException
 import java.time.LocalDateTime
+import java.util.TimeZone
 import java.util.concurrent.TimeUnit
-import kotlin.concurrent.timer
 
 class Application {
 
     private val logging = Logger.getLogger<Application>()
 
-    fun start() {
+    suspend fun start() {
         val dbService = DatabaseService.getInstance()
         val launcher = JDALauncher.getInstance()
         val http = ApisHttp(1L, TimeUnit.MINUTES)
@@ -50,9 +52,8 @@ class Application {
 
         logging.info("weacord 봇이 시작되었습니다!")
 
-        timer(
-            initialDelay = 0,
-            period = 600 * 1000L
+        doWhileTz(
+            "* * * 1 * 0o"
         ) {
             val queryExecutor = QueryExecutor()
             val now = LocalDateTime.now()
@@ -79,13 +80,17 @@ class Application {
                         first("tmFc < $today")
                     }.build()
                 )
+
+                logging.info("현재시간 ${it.format("yyyy-MM-dd HH:mm")}")
             } catch(e: SQLiteException) {
                 logging.error(e.message)
             }
+
+            true
         }
     }
 }
 
-fun main() {
+ fun main() = runBlocking {
     Application().start()
 }
